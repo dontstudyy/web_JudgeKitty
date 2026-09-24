@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>대한팩폭고등법원</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Noto+Serif+KR:wght@400;500;600;700&family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --paper: #F1ECDD;
+    --paper-edge: #E4DCC5;
+    --ink: #211E16;
+    --ink-soft: #55503F;
+    --ink-faint: #8B8471;
+    --seal: #A3271F;
+    --seal-dark: #7C1E18;
+    --line: #C9BFA0;
+    --bg: #C9C1A6;
+    --gold: #8A6D3B;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14120D;
+      --paper: #EFEADB;
+      --paper-edge: #E1D9C1;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14120D;
+    --paper: #EFEADB;
+    --paper-edge: #E1D9C1;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at top, rgba(255,255,255,0.06), transparent 60%);
+    font-family: "Noto Serif KR", serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px calc(48px + env(safe-area-inset-bottom, 0px));
+  }
+  html, body { min-height: 100%; }
+
+  .sheet {
+    width: 100%;
+    max-width: 620px;
+    min-height: calc(100vh - 90px);
+    background: var(--paper);
+    border: 1px solid var(--paper-edge);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5), 0 2px 0 rgba(0,0,0,0.04) inset;
+    padding: 40px 36px 44px;
+    position: relative;
+    background-image:
+      repeating-linear-gradient(transparent, transparent 27px, rgba(120,110,80,0.06) 28px);
+  }
+  .sheet::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(138,109,59,0.35);
+    pointer-events: none;
+  }
+
+  header.letterhead {
+    text-align: center;
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+  .court-name {
+    font-family: "Song Myung", serif;
+    font-size: 24px;
+    letter-spacing: 4px;
+    color: var(--gold);
+  }
+  .doc-title {
+    font-family: "Song Myung", serif;
+    font-size: 35px;
+    margin: 10px 0 4px;
+    letter-spacing: 2px;
+  }
+  .case-no {
+    font-family: "Nanum Gothic Coding", monospace;
+    font-size: 17px;
+    color: var(--ink-faint);
+  }
+
+  /* ---- intake form ---- */
+  .intake p.lead {
+    font-size: 16.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+  label.field-label {
+    display: block;
+    font-size: 14.5px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-family: "Noto Serif KR", serif;
+    font-weight: 600;
+  }
+  textarea {
+    width: 100%;
+    min-height: 130px;
+    resize: vertical;
+    background: rgba(255,255,255,0.35);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    font-family: "Noto Serif KR", serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink);
+    outline: none;
+  }
+  textarea:focus { border-color: var(--gold); }
+  textarea::placeholder { color: var(--ink-faint); }
+
+  .char-count {
+    text-align: right;
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-family: "Nanum Gothic Coding", monospace;
+    margin: 6px 0 0;
+  }
+  .char-count.over { color: var(--seal); }
+
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 24px;
+  }
+  .example-chip {
+    font-size: 14px;
+    padding: 6px 11px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: "Noto Serif KR", serif;
+  }
+  .example-chip:hover { border-color: var(--gold); color: var(--gold); }
+  .example-chip .emoji { font-size: 20px; vertical-align: -3px; margin-right: 2px; }
+
+  .submit-row { display: flex; justify-content: center; margin-top: 4px; }
+  button.submit {
+    font-family: "Song Myung", serif;
+    font-size: 19px;
+    letter-spacing: 3px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 14px 40px;
+    cursor: pointer;
+    position: relative;
+  }
+  button.submit:disabled { opacity: 0.55; cursor: default; }
+  button.submit:not(:disabled):hover { background: var(--seal-dark); }
+
+  .error-msg {
+    margin-top: 14px;
+    font-size: 15px;
+    color: var(--seal);
+    text-align: center;
+  }
+
+  /* ---- verdict view ---- */
+  .verdict-view { display: none; }
+  .verdict-view.show { display: block; }
+  .intake.hide { display: none; }
+
+  .charge-line {
+    text-align: center;
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--ink-faint);
+    margin-bottom: 26px;
+  }
+  .charge-line b { color: var(--seal); font-weight: 700; }
+
+  .ruling-box {
+    text-align: center;
+    padding: 22px 10px 26px;
+    margin-bottom: 26px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .ruling-label {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .ruling-text {
+    font-family: "Song Myung", serif;
+    font-size: 23px;
+    line-height: 1.6;
+  }
+
+  .gavel-icon-wrap {
+    display: flex;
+    justify-content: center;
+    color: var(--ink);
+    margin: 2px 0 16px;
+  }
+
+  /* 고양이 판사 4프레임 스프라이트(들어올림/내려침 x2, 투명 배경).
+     background-position만 토글해 프레임을 전환한다. 1번=들어올림, 2번=내려침 사용. */
+  /* 원본 프레임(384x1024) 안에서 고양이가 실제로 차지하는 영역은 세로 322~677px 뿐이라
+     여백이 많음. background-size/position으로 그 영역만 확대해서 보여준다 (webp 로딩
+     이미지와 비슷한 체감 크기를 맞추기 위함). */
+  .gavel-sprite {
+    width: 130px;
+    aspect-ratio: 384 / 365;
+    background-image: url('assets/gavel-cat-sprite-nobg.png');
+    background-size: 400% 280.548%;
+    background-position: 0% -105.6px;
+    background-repeat: no-repeat;
+  }
+
+  .gavel-strike { animation: gavelSpriteStrike 0.4s steps(1) forwards; }
+  @keyframes gavelSpriteStrike {
+    0%, 40%   { background-position: 0% -105.6px; }
+    50%, 100% { background-position: 33.3333% -105.6px; }
+  }
+
+  .stamp-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 6px 0 30px;
+  }
+  .stamp {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    border: 4px solid var(--seal);
+    color: var(--seal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Song Myung", serif;
+    font-size: 58px;
+    transform: rotate(-9deg) scale(0.5);
+    opacity: 0;
+    filter: url(#inkRough);
+    box-shadow: 0 0 0 3px rgba(163,39,31,0.08);
+    mix-blend-mode: multiply;
+  }
+  .stamp.animate {
+    animation: stampDown 0.55s cubic-bezier(.2,1.3,.4,1) forwards;
+  }
+  @keyframes stampDown {
+    0% { opacity: 0; transform: rotate(-9deg) scale(2.2); }
+    60% { opacity: 1; transform: rotate(-9deg) scale(0.92); }
+    100% { opacity: 1; transform: rotate(-9deg) scale(1); }
+  }
+
+  .gauge-block { margin: 0 0 30px; }
+  .gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink-faint);
+    margin-bottom: 7px;
+    font-family: "Nanum Gothic Coding", monospace;
+  }
+  .gauge-track {
+    position: relative;
+    height: 10px;
+    background: var(--line);
+  }
+  .gauge-fill {
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    background: var(--seal);
+    width: 0%;
+    transition: width 0.9s cubic-bezier(.3,.8,.3,1);
+  }
+  .gauge-center-line {
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    margin-left: -0.5px;
+    width: 1px;
+    height: 16px;
+    background: var(--ink-faint);
+    opacity: 0.6;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -6px;
+    width: 3px; height: 22px;
+    background: var(--ink);
+    left: 0%;
+    transition: left 0.9s cubic-bezier(.3,.8,.3,1);
+  }
+  .gauge-score-wrap {
+    position: relative;
+    height: 20px;
+    margin-top: 9px;
+  }
+  .gauge-score-readout {
+    position: absolute;
+    top: 0;
+    left: 0%;
+    transform: translateX(-50%);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--seal);
+    font-family: "Nanum Gothic Coding", monospace;
+    white-space: nowrap;
+    transition: left 0.9s cubic-bezier(.3,.8,.3,1);
+  }
+  .easter-egg-caption {
+    display: none;
+    text-align: center;
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: "Noto Serif KR", serif;
+    color: var(--seal);
+  }
+  .easter-egg-caption.show { display: block; }
+  .easter-egg-paw {
+    display: none;
+    height: 22px;
+    vertical-align: -6px;
+    margin-left: 4px;
+  }
+  .easter-egg-paw.show { display: inline; }
+
+  section.reasoning { margin-bottom: 10px; }
+  .section-label {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .reasoning-text {
+    font-size: 16.5px;
+    line-height: 2;
+    text-indent: 1em;
+  }
+
+  .quote-block {
+    margin: 22px 0 30px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--seal);
+    background: rgba(163,39,31,0.05);
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    font-style: normal;
+  }
+  .quote-block::before { content: "「 "; color: var(--seal); }
+  .quote-block::after { content: " 」"; color: var(--seal); }
+
+  .footer-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  button.again {
+    font-family: "Noto Serif KR", serif;
+    font-size: 15.5px;
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 10px 22px;
+    cursor: pointer;
+  }
+  button.again:hover { background: var(--ink); color: var(--paper); }
+
+  .thinking-wrap {
+    display: none;
+    text-align: center;
+    padding: 40px 0 20px;
+  }
+  .thinking-wrap.show { display: block; }
+  .thinking-wrap p {
+    font-family: "Song Myung", serif;
+    font-size: 23px;
+    letter-spacing: 2px;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+  .thinking-wrap .gavel-icon-wrap { color: var(--ink-soft); margin: 0; }
+  .thinking-tip {
+    margin-top: 16px;
+    font-family: "Noto Serif KR", serif;
+    font-size: 23px;
+    line-height: 1.8;
+    color: var(--ink-faint);
+    min-height: 2.6em;
+    white-space: pre-line;
+  }
+
+  @media (max-width: 420px) {
+    .sheet { padding: 30px 20px 34px; }
+    .doc-title { font-size: 30px; }
+    .ruling-text { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="inkRough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="4"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="sheet">
+  <header class="letterhead">
+    <div class="court-name">대 한 팩 폭 고 등 법 원</div>
+    <div class="doc-title">판 결 문</div>
+    <div class="case-no" id="caseNo">사건번호 2026T字 제0000호</div>
+  </header>
+
+  <div class="intake" id="intake">
+    <p class="lead">
+      당신 혹은 누군가의 사연을 있는 그대로 진술하십시오.<br>
+      본 법정이 T인지 F인지 엄중히 판결하겠습니다.
+    </p>
+    <label class="field-label" for="story">사연 진술</label>
+    <textarea id="story" maxlength="500" placeholder="예: 친구가 반려견이 무지개다리 건넜다고 울면서 전화했는데, &quot;그래서 화장은 언제 해? 병원비 얼마 나왔어?&quot;라고 먼저 물어봄"></textarea>
+    <p class="char-count" id="charCount">0 / 500</p>
+    <div class="examples">
+      <button class="example-chip" data-ex="1"><span class="emoji">🐶</span> 강아지 부고 예시</button>
+      <button class="example-chip" data-ex="2"><span class="emoji">💔</span> 이별 통보 예시</button>
+      <button class="example-chip" data-ex="3"><span class="emoji">🎂</span> 생일 서프라이즈 예시</button>
+    </div>
+    <div class="submit-row">
+      <button class="submit" id="submitBtn">선 고 요 청</button>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="thinking-wrap" id="thinkingWrap">
+    <p>판 결 중 입 니 다</p>
+    <div class="gavel-icon-wrap">
+      <img class="gavel-loading-img" src="assets/gavel-cat-loading.webp" width="130" height="130" alt="" aria-hidden="true">
+    </div>
+    <p class="thinking-tip" id="thinkingTip"></p>
+  </div>
+
+  <div class="verdict-view" id="verdictView">
+    <div class="charge-line">죄목: <b id="charge">—</b></div>
+
+    <div class="gavel-icon-wrap">
+      <div class="gavel-sprite" id="verdictGavel" aria-hidden="true"></div>
+    </div>
+
+    <div class="ruling-box">
+      <div class="ruling-label">주 문</div>
+      <div class="ruling-text" id="rulingText">—</div>
+      <div class="stamp-wrap">
+        <div class="stamp" id="stamp">T</div>
+      </div>
+    </div>
+
+    <div class="gauge-block">
+      <div class="gauge-labels"><span>F 감성 100</span><span>T 이성 100</span></div>
+      <div class="gauge-track">
+        <div class="gauge-fill" id="gaugeFill"></div>
+        <div class="gauge-center-line"></div>
+        <div class="gauge-marker" id="gaugeMarker"></div>
+      </div>
+      <div class="gauge-score-wrap">
+        <div class="gauge-score-readout" id="scoreReadout">T 0</div>
+      </div>
+      <div class="easter-egg-caption" id="easterEggCaption"><span id="easterEggText"></span><img id="easterEggPaw" class="easter-egg-paw" src="assets/paw-stamp.png" alt=""></div>
+    </div>
+
+    <section class="reasoning">
+      <div class="section-label">이 유</div>
+      <div class="reasoning-text" id="reasoningText">—</div>
+    </section>
+
+    <div class="quote-block" id="quoteBlock">—</div>
+
+    <div class="footer-row">
+      <button class="again" id="againBtn">다시 진술하기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const MAX_LEN = 500;
+  const MIN_THINKING_MS = 20000;
+  const TIP_INTERVAL_MS = 5000;
+
+  const THINKING_TIPS = [
+    "본 법정은 한 치의 사심도 없이\n냉철한 이성으로 심리하고 있습니다.",
+    "피고인의 진술 속 숨은 뜻을\n한 글자도 놓치지 않고 살피는 중입니다.",
+    "이성과 감성, 그 첨예한 경계를\n본 법정이 엄중히 가늠하는 중입니다.",
+    "재판장은 지금 이 순간에도\n추호의 흔들림 없이 숙고 중입니다.",
+    "피고인의 T성과 F성을\n만천하에 낱낱이 밝히려 하고 있습니다.",
+  ];
+
+  const EXAMPLES = {
+    1: "친구가 반려견이 무지개다리 건넜다고 울면서 전화했는데, \"그래서 화장은 언제 해? 병원비 얼마 나왔어?\"라고 먼저 물어봄",
+    2: "여자친구가 헤어지자면서 3시간 동안 눈물로 그동안 서운했던 점을 얘기했는데, 다 듣고 나서 \"그래서 결론이 뭐야, 헤어지자는 거야 아니라는 거야\" 라고 정리해서 물어봄",
+    3: "친구들이 몰래 준비한 깜짝 생일파티에서 다 같이 '짠!' 하고 나타났는데, 첫마디가 \"어 케이크 유통기한 확인했어?\" 였음"
+  };
+
+  const els = {
+    intake: document.getElementById('intake'),
+    story: document.getElementById('story'),
+    charCount: document.getElementById('charCount'),
+    submitBtn: document.getElementById('submitBtn'),
+    errorMsg: document.getElementById('errorMsg'),
+    thinkingWrap: document.getElementById('thinkingWrap'),
+    thinkingTip: document.getElementById('thinkingTip'),
+    verdictView: document.getElementById('verdictView'),
+    charge: document.getElementById('charge'),
+    rulingText: document.getElementById('rulingText'),
+    stamp: document.getElementById('stamp'),
+    verdictGavel: document.getElementById('verdictGavel'),
+    gaugeFill: document.getElementById('gaugeFill'),
+    gaugeMarker: document.getElementById('gaugeMarker'),
+    scoreReadout: document.getElementById('scoreReadout'),
+    easterEggCaption: document.getElementById('easterEggCaption'),
+    easterEggText: document.getElementById('easterEggText'),
+    easterEggPaw: document.getElementById('easterEggPaw'),
+    reasoningText: document.getElementById('reasoningText'),
+    quoteBlock: document.getElementById('quoteBlock'),
+    againBtn: document.getElementById('againBtn'),
+    caseNo: document.getElementById('caseNo'),
+  };
+
+  function randomCaseNo() {
+    const n = Math.floor(Math.random() * 9000) + 1000;
+    return `사건번호 2026T字 제${n}호`;
+  }
+  els.caseNo.textContent = randomCaseNo();
+
+  function updateCharCount() {
+    const len = els.story.value.length;
+    els.charCount.textContent = `${len} / ${MAX_LEN}`;
+    els.charCount.classList.toggle('over', len > MAX_LEN);
+  }
+  els.story.addEventListener('input', updateCharCount);
+  updateCharCount();
+
+  document.querySelectorAll('.example-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      els.story.value = EXAMPLES[btn.dataset.ex];
+      updateCharCount();
+      els.story.focus();
+    });
+  });
+
+  let submitting = false;
+  let tipTimer = null;
+
+  function startThinkingTips() {
+    let i = 0;
+    els.thinkingTip.textContent = THINKING_TIPS[0];
+    tipTimer = setInterval(() => {
+      i = (i + 1) % THINKING_TIPS.length;
+      els.thinkingTip.textContent = THINKING_TIPS[i];
+    }, TIP_INTERVAL_MS);
+  }
+
+  function stopThinkingTips() {
+    if (tipTimer) {
+      clearInterval(tipTimer);
+      tipTimer = null;
+    }
+  }
+
+  async function submitCase() {
+    const story = els.story.value.trim();
+    els.errorMsg.textContent = '';
+    if (!story) {
+      els.errorMsg.textContent = '진술 내용을 입력해 주십시오.';
+      return;
+    }
+    if (story.length > MAX_LEN) {
+      els.errorMsg.textContent = `진술은 ${MAX_LEN}자 이내로 입력해 주십시오.`;
+      return;
+    }
+    if (submitting) return;
+    submitting = true;
+    els.submitBtn.disabled = true;
+    els.intake.classList.add('hide');
+    els.thinkingWrap.classList.add('show');
+    els.verdictView.classList.remove('show');
+    startThinkingTips();
+
+    try {
+      const [res] = await Promise.all([
+        fetch('/api/judgment', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ story }),
+        }),
+        new Promise((resolve) => setTimeout(resolve, MIN_THINKING_MS)),
+      ]);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data && data.error ? data.error : '판결 도중 오류가 발생했습니다.');
+      }
+      renderVerdict(data);
+    } catch (e) {
+      els.thinkingWrap.classList.remove('show');
+      els.intake.classList.remove('hide');
+      els.errorMsg.textContent = (e && e.message) || '판결 도중 오류가 발생했습니다. 다시 시도해 주십시오.';
+    } finally {
+      stopThinkingTips();
+      submitting = false;
+      els.submitBtn.disabled = false;
+    }
+  }
+
+  function renderVerdict(data) {
+    const judgment = (data && (data.judgment === 'F' ? 'F' : 'T')) || 'T';
+    let score = Number(data && data.score);
+    if (!Number.isFinite(score)) score = 100;
+    score = Math.max(0, Math.min(200, score));
+
+    const percent = score / 2;
+    const scoreLabel = score < 100 ? `F ${100 - score}` : `T ${score - 100}`;
+
+    let easterEggLabel = '';
+    if (score === 100) {
+      easterEggLabel = '본 법정의 판사님만큼 공정한 사람';
+    } else if (score >= 90 && score <= 110) {
+      easterEggLabel = '본 법정의 판사님만큼은 아니지만 나름 공정한 사람';
+    }
+
+    els.thinkingWrap.classList.remove('show');
+    els.charge.textContent = (data && data.charge) || '판단 보류죄';
+    els.rulingText.textContent = (data && data.ruling) || `피고인을 ${judgment}형으로 선고한다.`;
+    els.reasoningText.textContent = (data && data.reasoning) || '이유 불충분으로 추가 심리가 필요합니다.';
+    els.quoteBlock.textContent = (data && data.quote) || '—';
+
+    els.stamp.textContent = judgment;
+    els.stamp.classList.remove('animate');
+    void els.stamp.offsetWidth;
+    els.stamp.classList.add('animate');
+
+    els.verdictGavel.classList.remove('gavel-strike');
+    void els.verdictGavel.offsetWidth;
+    els.verdictGavel.classList.add('gavel-strike');
+
+    els.gaugeFill.style.width = '0%';
+    els.gaugeMarker.style.left = '0%';
+    els.scoreReadout.textContent = scoreLabel;
+    els.scoreReadout.style.left = '0%';
+    els.easterEggText.textContent = easterEggLabel;
+    els.easterEggCaption.classList.toggle('show', easterEggLabel !== '');
+    els.easterEggPaw.classList.toggle('show', score === 100);
+
+    els.verdictView.classList.add('show');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        els.gaugeFill.style.width = percent + '%';
+        els.gaugeMarker.style.left = percent + '%';
+        els.scoreReadout.style.left = percent + '%';
+      });
+    });
+  }
+
+  els.submitBtn.addEventListener('click', submitCase);
+  els.story.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitCase();
+  });
+
+  els.againBtn.addEventListener('click', () => {
+    els.verdictView.classList.remove('show');
+    els.intake.classList.remove('hide');
+    els.caseNo.textContent = randomCaseNo();
+    els.story.value = '';
+    updateCharCount();
+    els.errorMsg.textContent = '';
+    els.story.focus();
+  });
+})();
+</script>
+</body>
+</html>
