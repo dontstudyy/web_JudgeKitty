@@ -96,6 +96,7 @@
 - [o] 프로덕션 URL 전체 플로우 재확인 (빈 입력 검증 400, 예시 3 사연으로 실제 판결문 생성 200 확인)
 
 > 참고: 배포 직후 발급되는 해시 URL(`https://<hash>.tfcourt.pages.dev`)은 전파 지연으로 잠시 접속이 안 될 수 있음 — 고정 URL `https://tfcourt.pages.dev`는 바로 정상 동작했음.
+> (2026-09-25) 프로젝트명을 `tfcourt` → `judgekitty`로 변경, 프로덕션 URL이 `https://judgekitty.pages.dev`로 바뀜. 위 항목들은 변경 당시 기록이라 원문 그대로 둠.
 
 ## Phase 6. 배포 후 모니터링 — 미착수
 
