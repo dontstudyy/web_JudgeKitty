@@ -26,8 +26,20 @@ const MAX_STORY_LENGTH = 500;
 // gemini-3.5-flash-lite는 내부적으로 thinking 과정을 거쳐 응답이 느린 편.
 // 실측 결과 최소 프롬프트도 ~19초가 걸려 15초는 너무 짧았음 (2026-09-24).
 const GEMINI_TIMEOUT_MS = 28000;
-const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
+
+// 앞 모델이 429(그 날 RPD 소진)면 다음 모델로 자동 폴백. 사용자에게는 어느 모델이 응답했는지
+// 티내지 않음(정책 결정). gemini-3.5-flash-lite / gemini-3.1-flash-lite 둘 다 RPD 500
+// (2026-09-25 실측, AI Studio 기준)이라 계정 전체로는 사실상 하루 1,000회까지 버팀.
+//
+// gemma-4-26b-a4b-it(RPD 14,400)도 3순위 후보로 붙여봤으나 제외함: 실측 결과 응답 시간이
+// 25초~300초+로 편차가 너무 커서(같은 프롬프트로도 매번 다름) 안정적인 폴백으로 못 씀
+// (2026-09-25). 그 이상으로 한도가 더 필요해지면 무료 티어 폴백을 늘리기보다 유료 플랜
+// 전환이 정공법.
+const GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"];
+
+function geminiEndpoint(model: string): string {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+}
 
 class GeminiError extends Error {
   code: "rate_limited" | "upstream_error" | "parse_error";
@@ -83,12 +95,12 @@ function buildMockResult(): JudgmentResult {
   };
 }
 
-async function callGemini(env: Env, prompt: string): Promise<JudgmentResult> {
+async function callGemini(env: Env, prompt: string, model: string): Promise<JudgmentResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
 
   try {
-    const res = await fetch(GEMINI_ENDPOINT, {
+    const res = await fetch(geminiEndpoint(model), {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -122,6 +134,20 @@ async function callGemini(env: Env, prompt: string): Promise<JudgmentResult> {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// GEMINI_MODELS를 순서대로 시도. 429(한도 소진)면 다음 모델로 넘어가고, 그 외 에러는 즉시 전파.
+async function callGeminiWithFallback(env: Env, prompt: string): Promise<JudgmentResult> {
+  for (let i = 0; i < GEMINI_MODELS.length; i++) {
+    try {
+      return await callGemini(env, prompt, GEMINI_MODELS[i]);
+    } catch (err) {
+      const isLastModel = i === GEMINI_MODELS.length - 1;
+      if (err instanceof GeminiError && err.code === "rate_limited" && !isLastModel) continue;
+      throw err;
+    }
+  }
+  throw new GeminiError("upstream_error", "판결 도중 오류가 발생했습니다. 다시 시도해 주십시오.");
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -162,12 +188,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const prompt = buildPrompt(maskedStory);
 
   try {
-    const result = await callGemini(env, prompt);
+    const result = await callGeminiWithFallback(env, prompt);
     return jsonResponse(result);
   } catch (err) {
     if (err instanceof GeminiError && err.code === "parse_error") {
       try {
-        const retryResult = await callGemini(env, prompt);
+        const retryResult = await callGeminiWithFallback(env, prompt);
         return jsonResponse(retryResult);
       } catch {
         return jsonResponse({ error: "판결문을 정리하지 못했습니다. 다시 시도해 주십시오." }, 502);
