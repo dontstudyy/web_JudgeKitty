@@ -58,12 +58,13 @@
 - [o] 파싱 실패 시 1회 재시도, 재실패 시 에러 메시지 반환
 - [o] 타임아웃 15초 설정 (`AbortController`)
 - [o] Gemini 429 → "재판정이 혼잡합니다" 메시지 매핑
+- [o] **모델 폴백 체인** (2026-09-25): `gemini-3.5-flash-lite` → `gemini-3.1-flash-lite` 순 429 시 자동 재시도 (`callGeminiWithFallback`), 사용자에겐 미노출. `gemma-4-26b-a4b-it`도 3순위로 시도해봤으나 응답 시간 편차(25초~300초+)가 너무 커서 제외 — 설계문서 참고
 - [o] 실제 Gemini API 키로 로컬 호출 성공 확인 (예시 1·2 사연으로 실제 판결문 생성 확인)
 
 ## Phase 3. 레이트리밋 (Cloudflare KV) — 로직 검증 완료, 실서버 연동은 부분 검증
 
 - [o] KV 키 설계: `rl:{IP}` (`CF-Connecting-IP` 기준)
-- [o] 하루 허용 호출 횟수 확정: **7회** (기획 범위 5~10회 중 중간값으로 결정)
+- [o] 하루 허용 호출 횟수 확정: **10회** (최초 7회 → 2026-09-25 Gemini RPD 500 실측 확인 후 10회로 상향, `functions/lib/ratelimit.ts` 참고)
 - [o] TTL 정책 확정: **24시간 롤링** (마지막 요청 시점 기준 재설정 — 자정 리셋보다 구현이 단순하고 정확도 요구가 낮아 채택)
 - [o] `functions/lib/ratelimit.ts` — KV 조회/증가/거부 로직 작성
 - [o] `/api/judgment`에 레이트리밋 체크 연결 (초과 시 429 응답)
