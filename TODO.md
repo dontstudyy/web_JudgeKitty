@@ -21,8 +21,8 @@
 - [o] `.gitignore` 설정 — `.dev.vars` 포함 확인
 - [o] Gemini API 키 발급 완료
 - [o] `GEMINI_API_KEY`를 `.dev.vars`에 등록 (로컬 테스트용, git 제외 확인됨)
-- [ ] **(사용자 액션)** Cloudflare Pages 프로젝트 생성 (대시보드 또는 `wrangler pages project create`) — 아직 프로덕션 배포 전이라 미착수
-- [ ] **(사용자 액션, 배포 전 필수)** `GEMINI_API_KEY`를 Cloudflare Pages 환경변수(Secret)로 등록 — `.dev.vars`는 로컬 전용, 배포 시 별도 등록 필요
+- [o] Cloudflare Pages 프로젝트 생성 (`judgekitty`, `judgekitty.pages.dev`로 접근 확인 완료)
+- [o] `GEMINI_API_KEY`를 Cloudflare Pages 환경변수(Secret)로 등록 (production 환경, Encrypted 확인 완료)
 
 > ⚠️ **주의 기록**: 최초에 `public/.env`에 키를 넣으셨는데, `public/`은 Cloudflare Pages가 정적 파일로 그대로 서빙하는 폴더라 배포 시 키가 그대로 노출될 뻔했습니다. `.dev.vars`(프로젝트 루트, gitignore 처리됨)로 옮겼습니다. 다행히 git 커밋 이력이 없어 실제 유출은 없었습니다.
 
